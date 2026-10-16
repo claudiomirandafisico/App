@@ -12,55 +12,58 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Inyeccion de CSS para tema negro profundo y estetica de laboratorio
+# Inyeccion de CSS para tema blanco cientifico (estilo publicacion academica)
 st.markdown("""
 <style>
     .stApp {
-        background-color: #050505;
-        color: #E2E8F0;
+        background-color: #FFFFFF;
+        color: #0F172A;
     }
     section[data-testid="stSidebar"] {
-        background-color: #0A0C10;
-        border-right: 1px solid #1E2430;
+        background-color: #F8FAFC;
+        border-right: 1px solid #E2E8F0;
     }
     div[data-testid="stMetric"] {
-        background-color: #0B0E14;
-        border: 1px solid #1E2430;
+        background-color: #F8FAFC;
+        border: 1px solid #CBD5E1;
         padding: 12px 16px;
         border-radius: 4px;
     }
     div[data-testid="stMetricLabel"] {
-        color: #94A3B8;
+        color: #475569;
         font-family: 'Courier New', monospace;
         font-size: 0.8rem;
+        font-weight: 600;
     }
     div[data-testid="stMetricValue"] {
-        color: #00E5FF;
+        color: #0F172A;
         font-family: 'Courier New', monospace;
         font-size: 1.35rem;
+        font-weight: 700;
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: #050505;
-        border-bottom: 1px solid #1E2430;
+        background-color: #FFFFFF;
+        border-bottom: 1px solid #CBD5E1;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #0B0E14;
-        border: 1px solid #1E2430;
+        background-color: #F1F5F9;
+        border: 1px solid #CBD5E1;
         border-bottom: none;
-        color: #94A3B8;
+        color: #475569;
         padding: 8px 20px;
         font-family: monospace;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #131822;
-        color: #00E5FF;
-        border-top: 2px solid #00E5FF;
+        background-color: #FFFFFF;
+        color: #1D4ED8;
+        border-top: 2px solid #1D4ED8;
+        font-weight: 600;
     }
     h1, h2, h3, h4 {
         font-family: 'Inter', 'Segoe UI', sans-serif;
         letter-spacing: -0.02em;
-        color: #F8FAFC;
+        color: #0F172A;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -301,15 +304,15 @@ df_telemetry = pd.DataFrame({
     "linear_momentum_norm": P_arr
 })
 
-# Plantilla comun de Plotly para Fondo Negro Cientifico
-DARK_LAYOUT = dict(
-    template="plotly_dark",
-    paper_bgcolor="#050505",
-    plot_bgcolor="#080A0F",
-    font=dict(family="Courier New, monospace", color="#CBD5E1", size=12),
-    xaxis=dict(gridcolor="#161B26", zerolinecolor="#2D3748", showline=True, linecolor="#2D3748"),
-    yaxis=dict(gridcolor="#161B26", zerolinecolor="#2D3748", showline=True, linecolor="#2D3748"),
-    margin=dict(l=50, r=20, t=45, b=45)
+# Plantilla comun de Plotly para Fondo Blanco Cientifico (Estilo Publicacion)
+LIGHT_LAYOUT = dict(
+    template="plotly_white",
+    paper_bgcolor="#FFFFFF",
+    plot_bgcolor="#FFFFFF",
+    font=dict(family="Courier New, monospace", color="#0F172A", size=12),
+    xaxis=dict(gridcolor="#E2E8F0", zerolinecolor="#94A3B8", showline=True, linecolor="#0F172A", mirror=True, ticks="outside"),
+    yaxis=dict(gridcolor="#E2E8F0", zerolinecolor="#94A3B8", showline=True, linecolor="#0F172A", mirror=True, ticks="outside"),
+    margin=dict(l=55, r=25, t=45, b=45)
 )
 
 # --- CREACION DE PESTAÑAS ---
@@ -334,39 +337,40 @@ with tab1:
 
     with col_orb:
         fig_orb = go.Figure()
-        palette = ["#00E5FF", "#FF2A85", "#FFB800"]
+        # Paleta de alto contraste sobre blanco (Azul Cobalto, Carmesi, Verde Esmeralda Oscuro)
+        palette = ["#1D4ED8", "#DC2626", "#059669"]
         
         for i in range(3):
             fig_orb.add_trace(go.Scatter(
                 x=traj_pos[:, i, 0],
                 y=traj_pos[:, i, 1],
                 mode="lines",
-                line=dict(color=palette[i], width=1.8),
+                line=dict(color=palette[i], width=2.0),
                 name=f"Cuerpo {i+1} (m={masses[i]:.3f})"
             ))
             fig_orb.add_trace(go.Scatter(
                 x=[traj_pos[0, i, 0]],
                 y=[traj_pos[0, i, 1]],
                 mode="markers",
-                marker=dict(size=7, color="#050505", line=dict(width=2, color=palette[i])),
+                marker=dict(size=7, color="#FFFFFF", line=dict(width=2, color=palette[i])),
                 showlegend=False
             ))
             fig_orb.add_trace(go.Scatter(
                 x=[traj_pos[-1, i, 0]],
                 y=[traj_pos[-1, i, 1]],
                 mode="markers",
-                marker=dict(size=10, color=palette[i], line=dict(width=1.5, color="#FFFFFF")),
+                marker=dict(size=10, color=palette[i], line=dict(width=1.5, color="#0F172A")),
                 showlegend=False
             ))
 
-        fig_orb.update_layout(**DARK_LAYOUT)
+        fig_orb.update_layout(**LIGHT_LAYOUT)
         fig_orb.update_layout(
             title="Proyeccion en el Espacio de Configuracion (x, y)",
             xaxis_title="Coordenada x [u.a.]",
             yaxis_title="Coordenada y [u.a.]",
-            yaxis=dict(scaleanchor="x", scaleratio=1, gridcolor="#161B26", zerolinecolor="#2D3748"),
+            yaxis=dict(scaleanchor="x", scaleratio=1, gridcolor="#E2E8F0", zerolinecolor="#94A3B8", showline=True, linecolor="#0F172A", mirror=True),
             height=460,
-            legend=dict(x=0.02, y=0.98, bgcolor="rgba(5,5,5,0.8)", bordercolor="#1E2430", borderwidth=1)
+            legend=dict(x=0.02, y=0.98, bgcolor="rgba(255,255,255,0.9)", bordercolor="#CBD5E1", borderwidth=1)
         )
         st.plotly_chart(fig_orb, use_container_width=True)
 
@@ -380,10 +384,10 @@ with tab1:
             x=r_norm,
             y=v_rad,
             mode="lines",
-            line=dict(color=palette[body_idx], width=1.5),
+            line=dict(color=palette[body_idx], width=1.6),
             name=f"Espacio de Fases C{body_idx+1}"
         ))
-        fig_phase.update_layout(**DARK_LAYOUT)
+        fig_phase.update_layout(**LIGHT_LAYOUT)
         fig_phase.update_layout(
             title=f"Retrato de Fase Radial (r vs. v_r) - Cuerpo {body_idx+1}",
             xaxis_title="Distancia Radial al Origen r [u.a.]",
@@ -395,8 +399,8 @@ with tab1:
     col_err1, col_err2 = st.columns(2)
     with col_err1:
         fig_e = go.Figure()
-        fig_e.add_trace(go.Scatter(x=t_arr, y=rel_dE, mode="lines", line=dict(color="#00F5D4", width=1.5), name="dE/E0"))
-        fig_e.update_layout(**DARK_LAYOUT)
+        fig_e.add_trace(go.Scatter(x=t_arr, y=rel_dE, mode="lines", line=dict(color="#0F172A", width=1.5), name="dE/E0"))
+        fig_e.update_layout(**LIGHT_LAYOUT)
         fig_e.update_layout(
             title="Evolucion Temporal del Error Relativo de Energia (E(t) - E0) / |E0|",
             xaxis_title="Tiempo [t]",
@@ -407,16 +411,16 @@ with tab1:
 
     with col_err2:
         fig_ek = go.Figure()
-        fig_ek.add_trace(go.Scatter(x=t_arr, y=K_arr, mode="lines", line=dict(color="#FF2A85", width=1.3), name="Cinetica (K)"))
-        fig_ek.add_trace(go.Scatter(x=t_arr, y=U_arr, mode="lines", line=dict(color="#00E5FF", width=1.3), name="Potencial (U)"))
-        fig_ek.add_trace(go.Scatter(x=t_arr, y=E_arr, mode="lines", line=dict(color="#FFFFFF", width=2.0), name="Total (E)"))
-        fig_ek.update_layout(**DARK_LAYOUT)
+        fig_ek.add_trace(go.Scatter(x=t_arr, y=K_arr, mode="lines", line=dict(color="#DC2626", width=1.5), name="Cinetica (K)"))
+        fig_ek.add_trace(go.Scatter(x=t_arr, y=U_arr, mode="lines", line=dict(color="#1D4ED8", width=1.5), name="Potencial (U)"))
+        fig_ek.add_trace(go.Scatter(x=t_arr, y=E_arr, mode="lines", line=dict(color="#0F172A", width=2.2), name="Total (E)"))
+        fig_ek.update_layout(**LIGHT_LAYOUT)
         fig_ek.update_layout(
             title="Particion Energetica del Sistema (K, U, E)",
             xaxis_title="Tiempo [t]",
             yaxis_title="Energia [u.e.]",
             height=280,
-            legend=dict(orientation="h", y=1.12, x=0.0)
+            legend=dict(orientation="h", y=1.15, x=0.0)
         )
         st.plotly_chart(fig_ek, use_container_width=True)
 
@@ -468,7 +472,7 @@ with tab2:
             z=Omega_clip,
             x=gx,
             y=gy,
-            colorscale="Magma",
+            colorscale="Blues",
             contours=dict(start=1.40, end=2.35, size=0.03, showlabels=False),
             colorbar=dict(title="Omega(x,y)"),
             name="Superficie Equipotencial"
@@ -478,10 +482,10 @@ with tab2:
             x=[-mu_val, 1.0 - mu_val],
             y=[0.0, 0.0],
             mode="markers+text",
-            marker=dict(size=[14, 10], color=["#FFFFFF", "#00E5FF"], line=dict(width=1.5, color="#050505")),
+            marker=dict(size=[14, 10], color=["#0F172A", "#1D4ED8"], line=dict(width=1.5, color="#FFFFFF")),
             text=["M1", "M2"],
             textposition="bottom center",
-            textfont=dict(color="#FFFFFF", size=11),
+            textfont=dict(color="#0F172A", size=12),
             name="Cuerpos Primarios"
         ))
 
@@ -489,19 +493,19 @@ with tab2:
             x=df_lagrange["x [adim]"],
             y=df_lagrange["y [adim]"],
             mode="markers+text",
-            marker=dict(size=10, symbol="cross-thin", color="#00F5D4", line=dict(width=2, color="#00E5FF")),
+            marker=dict(size=10, symbol="x", color="#DC2626", line=dict(width=1.5, color="#FFFFFF")),
             text=df_lagrange["Punto"],
             textposition="top center",
-            textfont=dict(color="#00E5FF", size=12),
+            textfont=dict(color="#DC2626", size=12),
             name="Puntos Criticos (L1-L5)"
         ))
 
-        fig_roche.update_layout(**DARK_LAYOUT)
+        fig_roche.update_layout(**LIGHT_LAYOUT)
         fig_roche.update_layout(
             title="Topologia del Potencial de Roche y Curvas de Velocidad Cero (Marco Corrotante)",
             xaxis_title="x [Longitud Caracteristica L]",
             yaxis_title="y [Longitud Caracteristica L]",
-            yaxis=dict(scaleanchor="x", scaleratio=1, gridcolor="#161B26"),
+            yaxis=dict(scaleanchor="x", scaleratio=1, gridcolor="#E2E8F0", showline=True, linecolor="#0F172A", mirror=True),
             height=580
         )
         st.plotly_chart(fig_roche, use_container_width=True)
